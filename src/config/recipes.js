@@ -8,32 +8,24 @@ const recipes = [
       "200g spaghetti",
       "300g ground beef",
       "1 can (400g) diced tomatoes",
-      "1 onion, chopped",
-      "2 cloves garlic, minced",
-      "2 tablespoons olive oil",
-      "Salt and pepper to taste",
-      "Fresh basil for garnish"
+
     ],
     steps: [
       "Cook the spaghetti according to package instructions.",
       "In a large pan, heat olive oil over medium heat and sauté the onion and garlic until softened.",
       "Add the ground beef and cook until browned.",
       "Stir in the diced tomatoes and season with salt and pepper. Simmer for 20 minutes.",
-      "Serve the sauce over the spaghetti and garnish with fresh basil."
     ],
   },
   {
     id: 2,
     name: "Chicken Caesar Salad",
     image: "https://example.com/images/chicken-caesar-salad.jpg",
-    description: "A crisp and refreshing Caesar salad topped with grilled chicken and homemade dressing.",
+    description: "A crisp and refreshing Caesar salad topped with grilled chicken.",
     ingredients: [
       "2 grilled chicken breasts, sliced",
       "6 cups romaine lettuce, chopped",
       "1/2 cup Caesar dressing",
-      "1/4 cup grated Parmesan cheese",
-      "Croutons for topping",
-      "Salt and pepper to taste"
     ],
     steps: [
       "In a large bowl, toss the chopped romaine lettuce with Caesar dressing until well coated.",
@@ -51,10 +43,7 @@ const recipes = [
       "400g firm tofu, cubed",
       "2 cups mixed vegetables (bell peppers, broccoli, carrots)",
       "3 tablespoons soy sauce",
-      "2 tablespoons sesame oil",
-      "1 tablespoon ginger, minced",
-      "2 cloves garlic, minced",
-      "Cooked rice for serving"
+
     ],
     steps: [
       "In a pan, heat sesame oil over medium-high heat and sauté the garlic and ginger until fragrant.",

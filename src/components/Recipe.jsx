@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import recipes from '../config/recipes'; // Import the recipes array
 import Header from '../components/Header'; // Assuming you have a Header component
@@ -9,6 +9,8 @@ const Recipe = () => {
 
   const [currentStep, setCurrentStep] = useState(0); // Track the current step for highlight
   const [chatMessages, setChatMessages] = useState([]); // Track chat messages
+  const [inputValue, setInputValue] = useState(''); // State for the input field
+  const chatContainerRef = useRef(null); // Reference for scrolling behavior
 
   if (!recipe) {
     return <p>Recipe not found</p>;
@@ -21,15 +23,41 @@ const Recipe = () => {
 
     // Simulate a response from the AI
     setTimeout(() => {
-      const aiResponse = { text: 'Let me help you with that step!', sender: 'ai' };
+      const aiResponse = { text: `Let me help you with that step!`, sender: 'ai' }; // You can modify the response logic here
       setChatMessages((prevMessages) => [...prevMessages, aiResponse]);
     }, 1000);
+  };
+
+  // Scroll to the top when new messages are added to simulate upward scrolling
+  useEffect(() => {
+    const chatContainer = chatContainerRef.current;
+    if (chatContainer) {
+      chatContainer.scrollTop = chatContainer.scrollHeight; // Scrolls to the latest message
+    }
+  }, [chatMessages]);
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      handleChatSubmit(inputValue);
+      setInputValue(''); // Clear input after submission
+    }
+  };
+
+  const handleButtonClick = () => {
+    if (inputValue.trim()) {
+      handleChatSubmit(inputValue);
+      setInputValue(''); // Clear input after submission
+    }
   };
 
   return (
     <div>
       <Header />
-      <div className="max-w-7xl mx-auto p-6 flex flex-col lg:flex-row lg:space-x-6">
+      <div className="py-20 max-w-7xl mx-auto p-6 flex flex-col lg:flex-row lg:space-x-6">
         {/* Left Side: Title, Ingredients, and Recipe Instructions */}
         <div className="flex-grow">
           {/* Title */}
@@ -67,23 +95,20 @@ const Recipe = () => {
           </div>
         </div>
 
-        {/* Right Side: Map and AI Cooking Assistant */}
+        {/* Right Side: AI Cooking Assistant */}
         <div className="flex-none lg:w-1/3">
-          {/* Map Component Placeholder */}
-          <div className="bg-gray-100 p-4 rounded-lg shadow-lg mb-6 h-96">
-            <h2 className="text-2xl font-semibold mb-4">Location</h2>
-            <p>Map will be displayed here.</p> {/* Replace with actual map component */}
-          </div>
-
           {/* AI Cooking Assistant */}
-          <div className="bg-white p-6 rounded-lg shadow-lg h-96">
+          <div className="bg-white p-6 rounded-lg shadow-lg h-[600px] flex flex-col">
             <h2 className="text-2xl font-semibold mb-4">AI Cooking Assistant</h2>
-            <div className="flex flex-col h-full overflow-auto p-4 bg-gray-100 rounded-lg space-y-4">
+            <div
+              ref={chatContainerRef}
+              className="flex-1 overflow-auto p-4 bg-gray-100 rounded-lg flex flex-col-reverse"
+            >
               {/* Chat Messages */}
-              {chatMessages.map((msg, index) => (
+              {chatMessages.slice().reverse().map((msg, index) => (
                 <div
                   key={index}
-                  className={`${msg.sender === 'user' ? 'text-right' : 'text-left'}`}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <p
                     className={`inline-block px-4 py-2 rounded-lg ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
@@ -100,18 +125,15 @@ const Recipe = () => {
                 type="text"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
                 placeholder="Ask the AI assistant..."
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.target.value.trim()) {
-                    handleChatSubmit(e.target.value);
-                    e.target.value = ''; // Clear input after submission
-                  }
-                }}
+                value={inputValue} // Controlled input
+                onChange={handleInputChange}
+                onKeyDown={handleKeyPress}
               />
               <button
-                onClick={() => handleChatSubmit('Generate an image of the recipe')}
+                onClick={handleButtonClick}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg"
               >
-                Generate Image
+                Send
               </button>
             </div>
           </div>
