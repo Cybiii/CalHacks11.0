@@ -108,10 +108,10 @@ const Recipe = () => {
               {chatMessages.slice().reverse().map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex mb-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <p
-                    className={`inline-block px-4 py-2 rounded-lg ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
+                    className={`inline-block px-4 py-2 rounded-xl max-w-[80%] ${msg.sender === 'user' ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-300 text-black mr-auto'}`}
                   >
                     {msg.text}
                   </p>
