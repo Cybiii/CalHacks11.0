@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import Bookmarks from "./Bookmarks"; // Import Bookmarks component
 import FilledBookmarkIcon from "./FilledBookmarkIcon";
 import EmptyBookmarkIcon from "./EmptyBookmarkIcon";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
@@ -38,7 +39,27 @@ const Dashboard = () => {
 
     return () => unsubscribe();
   }, [currentUser]);
+  
+  // Function to fetch google images using Pexels API
+  async function pexelSearchPhotos(query) {
+    try{
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=1`,{
+            headers: {
+                Authorization: "bV8EomxUZBoaninBow7lKNbzqPreK2V6b4UN2O9VPzYQwKLoOzHV61XX"
+            }
+        });
 
+        if(!response.ok){
+            throw new Error(`Pexels API error ${response.status} ${response.statusText}`)
+        }
+        const data = await response.json();
+        return data;
+
+    }catch(error){
+        console.error('Error fetching photos: ', error);
+    }};
+
+  // Function to fetch recipes from Ninja API based on the search query
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
@@ -50,6 +71,7 @@ const Dashboard = () => {
           query: query,
         },
       });
+      
 
       const recipesWithId = response.data.map((recipe) => ({
         ...recipe,
@@ -57,6 +79,25 @@ const Dashboard = () => {
       }));
 
       setRecipes(recipesWithId);
+      
+
+      // For each photo, call Pexel search photos
+      for (let i = 0; i < response.data.length; i++){
+        pexelSearchPhotos(response.data[i].title)
+        .then(photos => {
+          response.data[i].image = photos.photos[0].src.tiny;
+          console.log("LOADED PHOTO::", photos.photos[0].src.tiny);
+
+        }).catch(error => {
+          console.error("Error fetching photos from Pexels:", error);
+        });
+      }
+
+
+
+      setRecipes(response.data);
+
+      
       setLoading(false);
     } catch (error) {
       setError("Error fetching recipes");
@@ -128,27 +169,33 @@ const Dashboard = () => {
       ) : error ? (
         <p className="text-center text-[#e4002b]">{error}</p>
       ) : (
-        <>
-          <div className="relative max-w-full overflow-x-auto">
-            <div className="flex space-x-6">
-              {recipes.length > 0 ? (
-                recipes.map((recipe) => (
-                  <div
-                    key={recipe.id}
-                    className="group relative flex-none w-64 cursor-pointer"
-                    onClick={() =>
-                      navigate(`/recipes/${recipe.title}`, {
-                        state: { recipe },
-                      })
-                    }
-                  >
+        <div className="relative max-w-full overflow-x-auto">
+          <div className="flex space-x-6">
+            {recipes.length > 0 ? (
+              recipes.map((recipe) => (
+                <div
+                  key={recipe.id}
+                  className="group relative flex-none w-64 cursor-pointer"
+                  onClick={() =>
+                    navigate(`/recipes/${recipe.title}`, { state: { recipe } })
+                  }
+                >
+                  {/* Recipe Tile */}
                     <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105 h-96 flex flex-col justify-between">
-                      <img
-                        src={recipe.image || "placeholder-image.jpg"}
-                        alt={recipe.title}
-                        className="w-full h-40 object-cover rounded-t-3xl mb-4"
-                      />
-                      <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
+                    {/* Image */}
+                    {/* <img
+                      src={recipe.image} // Use a placeholder if no image
+                      alt={recipe.title}
+                      className="w-full h-40 object-cover rounded-t-lg mb-4"
+                    /> */}
+                    <LazyLoadImage
+                      src={recipe.image} 
+                      alt={recipe.title}
+                      width={'100%'}     // Provide width for better layout
+                      height={160}      // Provide height for better layout  
+                      className="w-full h-40 object-cover rounded-t-lg mb-4" 
+                    />
+                    <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
                       <p className="text-gray-600">
                         {recipe.instructions?.slice(0, 50)}...
                       </p>
@@ -175,7 +222,6 @@ const Dashboard = () => {
                           <EmptyBookmarkIcon />
                         )}
                       </button>
-                    </div>
                   </div>
                 ))
               ) : (
@@ -192,5 +238,6 @@ const Dashboard = () => {
     </section>
   );
 };
+
 
 export default Dashboard;
