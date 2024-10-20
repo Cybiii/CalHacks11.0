@@ -14,6 +14,7 @@ import Bookmarks from "./Bookmarks"; // Import Bookmarks component
 import FilledBookmarkIcon from "./FilledBookmarkIcon";
 import EmptyBookmarkIcon from "./EmptyBookmarkIcon";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import mealPrepImage from "/images/mealprep.png";
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
@@ -48,8 +49,7 @@ const Dashboard = () => {
         `https://api.pexels.com/v1/search?query=${query}&per_page=1`,
         {
           headers: {
-            Authorization:
-              import.meta.env.VITE_PEXELS_API_KEY,
+            Authorization: import.meta.env.VITE_PEXELS_API_KEY,
           },
         }
       );
@@ -171,7 +171,7 @@ const Dashboard = () => {
         <div className="flex justify-center items-center mb-8">
           <img
             className="mx-auto"
-            src={"../../public/images/mealprep.png"} // Using the imported image
+            src={mealPrepImage}
             width="600"
             alt="logo"
           />

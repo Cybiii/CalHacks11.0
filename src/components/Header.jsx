@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext'; // Use the global auth context
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 
+import smallLogo from '/images/smalogo.png'
+
 function Header() {
   const [top, setTop] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false); // Control for the dropdown menu
@@ -40,7 +42,7 @@ function Header() {
             {/* Logo */}
             <Link to="/" className="block" aria-label="Cruip">
               <img
-                src="../../public/images/smalogo.png" // Update this to the correct path of your PNG logo
+                src={smallLogo}// Update this to the correct path of your PNG logo
                 alt="Logo"
                 className="w-15 h-10" // Adjust size if needed
               />

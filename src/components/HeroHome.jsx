@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../utils/Modal';
+import videoDemo from "/videos/video.mp4";
+import thumbnail from "/images/image.png";
 
 function HeroHome() {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
@@ -65,7 +67,7 @@ function HeroHome() {
           <div className="flex justify-center items-center mb-8" data-aos="zoom-y-out" data-aos-delay="450">
             <div className="flex flex-col">
               {/* Applying rounded-full to make the image fully round */}
-              <img className="mx-auto" src={'../../public/images/image.png'} width="768" height="432" alt="Hero" />
+              <img className="mx-auto" src={thumbnail} width="768" height="432" alt="Hero" />
             </div>
             <button
               className="absolute top-full flex transform -translate-y-1/2 bg-white rounded-full font-medium group p-4 shadow-lg"
@@ -92,7 +94,7 @@ function HeroHome() {
           <Modal id="modal" ariaLabel="modal-headline" show={videoModalOpen} handleClose={() => setVideoModalOpen(false)}>
             <div className="relative  pb-9/16">
               <video ref={video} className="absolute w-full h-full" width="1920" height="1080" loop autoPlay controls>
-                <source src="/videos/video.mp4" type="video/mp4" />
+                <source src={videoDemo} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
