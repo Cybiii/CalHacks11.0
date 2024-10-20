@@ -2,10 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000; 
 
+const edamamApi = require('./edamam');
 
-
-app.get('/', (req, res) => {
-  res.send('Hello from the Express.js backend!');
+app.get('/', async (req, res) => {
+    const ramenRecipes = await edamamApi.getRecipesByIngredient("ramen");
+    let recipe0 = ramenRecipes["hits"][0]["recipe"];
+    let recipeName = recipe0["label"]
+    res.send("hello");
 });
 
 app.get('/api/data', (req, res) => {
@@ -15,3 +18,5 @@ app.get('/api/data', (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
+
