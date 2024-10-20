@@ -2,30 +2,65 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import recipes from '../config/recipes'; // Import the recipes array
 import Header from '../components/Header'; // Assuming you have a Header component
+import Groq from "groq-sdk";
+
+
+const groq = new Groq({ 
+  apiKey: import.meta.env.VITE_GROQ_API_KEY,
+  dangerouslyAllowBrowser: true //NOT FOR PRODUCTION!
+
+});
+
+
+
+
 
 const Recipe = () => {
   const { name } = useParams(); // Get the recipe name from the URL
   const recipe = recipes.find((r) => r.name === decodeURIComponent(name));
-
+  
   const [currentStep, setCurrentStep] = useState(0); // Track the current step for highlight
   const [chatMessages, setChatMessages] = useState([]); // Track chat messages
   const [inputValue, setInputValue] = useState(''); // State for the input field
   const chatContainerRef = useRef(null); // Reference for scrolling behavior
-
+  
   if (!recipe) {
     return <p>Recipe not found</p>;
   }
 
+  // Function to fetch Groq AI's response
+  const fetchGroqResponse = async (message) => {
+    try {
+        const response = await groq.chat.completions.create({
+            messages: [
+                {
+                    role: "user",
+                    content: message,
+                },
+            ],
+            model: "llama3-8b-8192", // Choose the appropriate model you want to use
+        });
+  
+        // Extracting AI response from the API call
+        const aiMessage = response.choices[0]?.message?.content || "Sorry, I couldn't understand that.";
+        return aiMessage;
+    } catch (error) {
+        console.error("Error fetching AI response:", error);
+        return "Error fetching response from AI.";
+    }
+  };
+  
   // Function to handle chatbot interaction
-  const handleChatSubmit = (message) => {
+  const handleChatSubmit = async (message) => {
     const newMessage = { text: message, sender: 'user' };
     setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+    
+        // Fetch AI response using Groq
+        const aiResponseText = await fetchGroqResponse(message);
 
-    // Simulate a response from the AI
-    setTimeout(() => {
-      const aiResponse = { text: `Let me help you with that step!`, sender: 'ai' }; // You can modify the response logic here
-      setChatMessages((prevMessages) => [...prevMessages, aiResponse]);
-    }, 1000);
+        // Add AI's response to chat messages
+        const aiResponse = { text: aiResponseText, sender: 'ai' };
+        setChatMessages((prevMessages) => [...prevMessages, aiResponse]);
   };
 
   // Scroll to the top when new messages are added to simulate upward scrolling
