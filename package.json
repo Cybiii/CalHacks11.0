@@ -7,6 +7,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cartesia/cartesia-js": "^1.1.0",
     "@radix-ui/themes": "^3.1.4",
     "@tailwindcss/forms": "^0.5.3",
     "aos": "^3.0.0-beta.6",
