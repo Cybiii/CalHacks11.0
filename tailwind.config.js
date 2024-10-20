@@ -134,7 +134,6 @@ module.exports = {
 	  },
 	},
 	plugins: [
-	  require("tailwindcss-animate"), // From the first config
 	  require('@tailwindcss/forms'), // From the second config
 	],
 	variants: {
