@@ -84,7 +84,7 @@ const Dashboard = () => {
                 </Link>
               ))
             ) : (
-              <p className="text-gray-600 text-center w-full">
+              <p className="text-white text-center w-full">
                 No recipes found.
               </p>
             )}

@@ -40,9 +40,9 @@ function Header() {
             {/* Logo */}
             <Link to="/" className="block" aria-label="Cruip">
               <img
-                src="../2.png" // Update this to the correct path of your PNG logo
+                src="../../public/images/smalogo.png" // Update this to the correct path of your PNG logo
                 alt="Logo"
-                className="w-8 h-8" // Adjust size if needed
+                className="w-15 h-10" // Adjust size if needed
               />
             </Link>
           </div>
