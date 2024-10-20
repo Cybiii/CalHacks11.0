@@ -58,13 +58,13 @@ const Bookmarks = () => {
 
   return (
     <div className="bookmarks my-8">
-      <h2 className="text-2xl font-semibold mb-4 text-white">
+      <h2 className="text-2xl text-center font-semibold mb-4 text-white">
         Your Bookmarked Recipes
       </h2>
       {bookmarks.length === 0 ? (
         <p className="text-white">You haven't bookmarked any recipes yet.</p>
       ) : (
-        <div className="flex flex-wrap gap-6">
+        <div className="flex justify-center flex-wrap gap-6">
           {bookmarks.map((bookmark) => (
             <div
               key={bookmark.id}
