@@ -41,7 +41,7 @@ function Testimonials() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="py-2  md:py-20">
+        <div className="py-0  md:py-10">
 
           
         </div>
