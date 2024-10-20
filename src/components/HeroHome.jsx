@@ -39,7 +39,7 @@ function HeroHome() {
           {/* Section header */}
           <div className="text-center pb-12 md:pb-16">
             <img
-              src='../../public/images/mealprep.png'
+              src='/images/mealprep.png'
               width={600}
               className="mx-auto text-5xl md:text-6xl leading-tighter tracking-tighter"
               data-aos="zoom-y-out"
