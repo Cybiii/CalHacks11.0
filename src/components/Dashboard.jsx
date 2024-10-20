@@ -120,8 +120,7 @@ const Dashboard = () => {
                       src={recipe.image} 
                       alt={recipe.title}
                       width={'100%'}     // Provide width for better layout
-                      height={160}      // Provide height for better layout 
-                      effect="blur"      // Optional: Add a blur effect
+                      height={160}      // Provide height for better layout  
                       className="w-full h-40 object-cover rounded-t-lg mb-4" 
                     />
                     {/* Name and Description */}
