@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import Header from "../components/Header"; // Assuming you have a Header component
+import Header from "../components/Header";
 import Groq from "groq-sdk";
-import { useTTS } from "@cartesia/cartesia-js/react"; // Import TTS hook
+import { useTTS } from "@cartesia/cartesia-js/react";
 import { useLocation } from "react-router-dom";
+import nlp from 'compromise'; // Import compromise
 
 const groq = new Groq({
   apiKey: import.meta.env.VITE_GROQ_API_KEY,
@@ -14,10 +15,11 @@ const Recipe = () => {
   const { recipe } = location.state; // Access the passed recipe from the state
 
   const ingredients = recipe.ingredients.split("|").map((ing) => ing.trim());
-  const steps = recipe.instructions
-    .split(".")
-    .filter((step) => step.trim() !== "")
-    .map((step) => step.trim() + "."); // Add period back
+
+  // Use compromise to tokenize sentences
+  const doc = nlp(recipe.instructions);
+  const sentences = doc.sentences().out('array');
+  const steps = sentences.map((sentence) => sentence.trim());
 
   const [currentStep, setCurrentStep] = useState(0); // Track the current step for highlight
   const [completedSteps, setCompletedSteps] = useState([]); // Track completed steps
@@ -39,21 +41,22 @@ const Recipe = () => {
 
   // Function to generate the system message
   const generateSystemMessage = (message) => {
-    return `You are a helpful cooking assistant. Your goal is to guide the user through the recipe one step at a time. Only proceed to the next step if the user explicitly says they are ready, such as "next step" or "I'm ready for the next step." If the user asks a question or needs clarification about the current step, provide a helpful answer without proceeding to the next step.
+    return `You are a helpful cooking assistant. Your goal is to guide the user through the recipe one step at a time. The user can select any step they want to work on. Provide assistance based on the user's current step, and answer any questions they may have about it. Do not assume the user has completed previous steps unless they indicate so.
 
 Here is the context of the recipe:
 - **Ingredients**: ${ingredients.join(", ")}.
 - **Current step**: ${steps[currentStep]}.
 
 Completed steps:
-${completedSteps.length > 0
-      ? completedSteps.map((index) => steps[index]).join(" ")
-      : "None completed yet"
-  }
+${
+      completedSteps.length > 0
+        ? completedSteps.map((index) => steps[index]).join(" ")
+        : "None completed yet"
+    }
 
 Based on the user's input, here's what they've said: "${message}".
 
-Please assist the user accordingly. Remember to wait for the user's readiness before moving on to the next step.`;
+Please assist the user accordingly, focusing on the current step.`;
   };
 
   // Function to fetch Groq AI's response with the updated conversation history
@@ -91,9 +94,10 @@ Please assist the user accordingly. Remember to wait for the user's readiness be
     setChatMessages((prevMessages) => [...prevMessages, newMessage]);
 
     // Check if the user indicates they are ready to move on
-    const userReady = message.toLowerCase().includes("next step") ||
-      message.toLowerCase().includes("i'm ready") ||
-      message.toLowerCase().includes("done");
+    const readinessPhrases = ["next", "next step", "done", "i'm ready", "ready"];
+    const userReady = readinessPhrases.some((phrase) =>
+      message.toLowerCase().includes(phrase)
+    );
 
     // Fetch AI response using Groq with the updated prompt
     const aiResponseText = await fetchGroqResponse(message);
@@ -114,16 +118,63 @@ Please assist the user accordingly. Remember to wait for the user's readiness be
       await tts.play();
     }
 
+    // Move to the next step if the user is ready
     if (userReady) {
       handleNextStep();
+    }
+  };
+
+  // Function to handle step click
+  const handleStepClick = (index) => {
+    setCurrentStep(index);
+
+    // Optionally, update completed steps
+    const newCompletedSteps = [...Array(index).keys()];
+    setCompletedSteps(newCompletedSteps);
+
+    // Inform the AI assistant about the change
+    handleStepChange(index);
+  };
+
+  // Function to inform AI assistant about step change
+  const handleStepChange = async (index) => {
+    const message = `I have moved to step ${index + 1}: "${steps[index]}"`;
+
+    const newMessage = { role: "user", content: message };
+    setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    // Fetch AI response using Groq with the updated prompt
+    const aiResponseText = await fetchGroqResponse(message);
+
+    const aiResponse = { role: "assistant", content: aiResponseText };
+    setChatMessages((prevMessages) => [...prevMessages, aiResponse]);
+
+    // Play the chatbot response if TTS is enabled
+    if (isTTSEnabled) {
+      await tts.buffer({
+        model_id: "sonic-english",
+        voice: {
+          mode: "id",
+          id: "a0e99841-438c-4a64-b679-ae501e7d6091",
+        },
+        transcript: aiResponseText,
+      });
+      await tts.play();
     }
   };
 
   // Function to move to the next step and track completed steps
   const handleNextStep = () => {
     if (currentStep < steps.length - 1) {
-      setCompletedSteps((prevSteps) => [...prevSteps, currentStep]); // Add before incrementing
+      setCompletedSteps((prevSteps) => [...prevSteps, currentStep]);
       setCurrentStep((prev) => prev + 1);
+    } else {
+      // All steps completed
+      const completionMessage = {
+        role: "assistant",
+        content: "Congratulations! You've completed all the steps.",
+      };
+      setChatMessages((prevMessages) => [...prevMessages, completionMessage]);
     }
   };
 
@@ -187,24 +238,20 @@ Please assist the user accordingly. Remember to wait for the user's readiness be
               {steps.map((step, index) => (
                 <li
                   key={index}
-                  className={`p-4 rounded-lg ${
+                  className={`p-4 rounded-lg cursor-pointer ${
                     index === currentStep
                       ? "bg-blue-200"
                       : completedSteps.includes(index)
                       ? "bg-green-200"
                       : "bg-white"
                   }`}
+                  onClick={() => handleStepClick(index)}
                 >
                   {step}
                 </li>
               ))}
             </ul>
-            <button
-              className="mt-4 text-blue-500 hover:underline"
-              onClick={handleNextStep}
-            >
-              Next Step
-            </button>
+            {/* Remove the Next Step button */}
           </div>
         </div>
 
