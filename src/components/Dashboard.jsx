@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
@@ -110,10 +111,18 @@ const Dashboard = () => {
                   {/* Recipe Tile */}
                   <div className="p-6 bg-white rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
                     {/* Image */}
-                    <img
+                    {/* <img
                       src={recipe.image} // Use a placeholder if no image
                       alt={recipe.title}
                       className="w-full h-40 object-cover rounded-t-lg mb-4"
+                    /> */}
+                    <LazyLoadImage
+                      src={recipe.image} 
+                      alt={recipe.title}
+                      width={'100%'}     // Provide width for better layout
+                      height={160}      // Provide height for better layout 
+                      effect="blur"      // Optional: Add a blur effect
+                      className="w-full h-40 object-cover rounded-t-lg mb-4" 
                     />
                     {/* Name and Description */}
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
