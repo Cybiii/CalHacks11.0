@@ -42,17 +42,14 @@ const Dashboard = () => {
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "https://api.api-ninjas.com/v1/recipe",
-        {
-          headers: {
-            "X-Api-Key": import.meta.env.VITE_NINJA_API_KEY,
-          },
-          params: {
-            query: query,
-          },
-        }
-      );
+      const response = await axios.get("https://api.api-ninjas.com/v1/recipe", {
+        headers: {
+          "X-Api-Key": import.meta.env.VITE_NINJA_API_KEY,
+        },
+        params: {
+          query: query,
+        },
+      });
 
       const recipesWithId = response.data.map((recipe) => ({
         ...recipe,
@@ -95,11 +92,9 @@ const Dashboard = () => {
           existingBookmark.docId
         );
         await deleteDoc(bookmarkDocRef);
-        alert("Bookmark removed!");
       } else {
         // Add the bookmark
         await addDoc(bookmarksRef, recipe);
-        alert("Recipe bookmarked!");
       }
     } catch (error) {
       console.error("Error handling bookmark: ", error);
@@ -153,9 +148,7 @@ const Dashboard = () => {
                         alt={recipe.title}
                         className="w-full h-40 object-cover rounded-t-3xl mb-4"
                       />
-                      <h4 className="text-xl font-bold mb-2">
-                        {recipe.title}
-                      </h4>
+                      <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
                       <p className="text-gray-600">
                         {recipe.instructions?.slice(0, 50)}...
                       </p>
