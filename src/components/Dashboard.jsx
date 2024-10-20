@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchQuery, setSearchQuery] = useState(""); // Separate state for the submitted query
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate(); // Add this within the component
+  
   // Function to fetch google images using Pexels API
   async function pexelSearchPhotos(query) {
     try{
@@ -34,12 +35,12 @@ const Dashboard = () => {
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
-      const response = await axios.get('https://api.api-ninjas.com/v1/recipe', {
+      const response = await axios.get("https://api.api-ninjas.com/v1/recipe", {
         headers: {
-          'X-Api-Key': '83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs',
+          "X-Api-Key": "83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs",
         },
         params: {
-          query: query, // pass submitted search term
+          query: query,
         },
       });
       
@@ -66,28 +67,27 @@ const Dashboard = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent page refresh
-    setSearchQuery(searchTerm); // Update the search query to trigger the API call
-    fetchRecipes(searchTerm); // Call the API with the search term
+    e.preventDefault();
+    setSearchQuery(searchTerm);
+    fetchRecipes(searchTerm);
   };
 
   return (
-    <section className="relative pt-24 px-6">
+    <section className="relative pt-24 px-6 bg-[#e4002b] min-h-screen">
       {/* Search Bar */}
-      <div className="max-w-lg mx-auto mb-8">
-        <form onSubmit={handleSubmit}> {/* Form submission will trigger the search */}
+      <div className="max-w-lg mx-auto pt-20 mb-8">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center">
           <input
             type="text"
             placeholder="Search for a recipe..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"
-            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg"
+            className="mt-4 w-1/4 px-4 py-3 bg-[#a3001b] text-white rounded-full text-center"
           >
             Search
           </button>
@@ -97,19 +97,21 @@ const Dashboard = () => {
       {loading ? (
         <p className="text-center">Loading...</p>
       ) : error ? (
-        <p className="text-center text-red-500">{error}</p>
+        <p className="text-center text-[#e4002b]">{error}</p>
       ) : (
         <div className="relative max-w-full overflow-x-auto">
           <div className="flex space-x-6">
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
-                <Link
-                  to={`/recipes/${recipe.title}`}
+                <div
                   key={recipe.id}
-                  className="group relative flex-none w-64"
+                  className="group relative flex-none w-64 cursor-pointer"
+                  onClick={() =>
+                    navigate(`/recipes/${recipe.title}`, { state: { recipe } })
+                  }
                 >
                   {/* Recipe Tile */}
-                  <div className="p-6 bg-white rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
+                  <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105">
                     {/* Image */}
                     {/* <img
                       src={recipe.image} // Use a placeholder if no image
@@ -123,14 +125,13 @@ const Dashboard = () => {
                       height={160}      // Provide height for better layout  
                       className="w-full h-40 object-cover rounded-t-lg mb-4" 
                     />
-                    {/* Name and Description */}
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
-                    <p className="text-gray-600">{recipe.instructions?.slice(0, 50)}...</p> {/* Limit description */}
+                    <p className="text-gray-600">{recipe.instructions?.slice(0, 50)}...</p>
                   </div>
-                </Link>
+                </div>
               ))
             ) : (
-              <p className="text-gray-600 text-center w-full">
+              <p className="text-white text-center w-full">
                 No recipes found.
               </p>
             )}
