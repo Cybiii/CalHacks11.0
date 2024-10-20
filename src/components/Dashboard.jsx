@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -8,13 +8,14 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Add this within the component
 
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
-      const response = await axios.get('https://api.api-ninjas.com/v1/recipe', {
+      const response = await axios.get("https://api.api-ninjas.com/v1/recipe", {
         headers: {
-          'X-Api-Key': '83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs',
+          "X-Api-Key": "83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs",
         },
         params: {
           query: query,
@@ -64,10 +65,12 @@ const Dashboard = () => {
           <div className="flex space-x-6">
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
-                <Link
-                  to={`/recipes/${recipe.title}`}
+                <div
                   key={recipe.id}
-                  className="group relative flex-none w-64"
+                  className="group relative flex-none w-64 cursor-pointer"
+                  onClick={() =>
+                    navigate(`/recipes/${recipe.title}`, { state: { recipe } })
+                  }
                 >
                   {/* Recipe Tile */}
                   <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105">
@@ -77,11 +80,10 @@ const Dashboard = () => {
                       alt={recipe.title}
                       className="w-full h-40 object-cover rounded-t-3xl mb-4"
                     />
-                    {/* Name and Description */}
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
                     <p className="text-gray-600">{recipe.instructions?.slice(0, 50)}...</p>
                   </div>
-                </Link>
+                </div>
               ))
             ) : (
               <p className="text-white text-center w-full">
