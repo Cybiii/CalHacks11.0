@@ -2,13 +2,15 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"; // Import Firestore
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC8PD-lH7Kn0k3BgYp6QI06e0q5Ee4C4Xo",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "calhacks11-52247.firebaseapp.com",
   projectId: "calhacks11-52247",
   storageBucket: "calhacks11-52247.appspot.com",
@@ -20,5 +22,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+export const db = getFirestore(app); // Initialize Firestore
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

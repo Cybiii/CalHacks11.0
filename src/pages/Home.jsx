@@ -7,7 +7,6 @@ import Testimonials from "../components/Testimonials";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/Footer";
 import Dashboard from "../components/Dashboard";
-import recipes from "../config/recipes"; // Import recipes
 import { useAuth } from "../context/AuthContext"; 
 
 function Home() {
@@ -29,7 +28,7 @@ function Home() {
 
       {/* Conditionally render components based on authentication status */}
       {currentUser ? (
-        <Dashboard recipes={recipes} />
+        <Dashboard />
       ) : (
         <main className="flex-grow">
           {/* Page sections */}
