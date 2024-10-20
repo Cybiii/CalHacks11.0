@@ -9,6 +9,25 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Function to fetch google images for Ninja API response
+  const searchImage = async (query) => {
+    try {
+      const response = await axios.get('https://serpapi.com/search.json', {
+        params: {
+          // api_key: process.env.SERPAPI_API_KEY,
+          api_key: "7ecbc898f72aac24a3cf7d84444694019e7e485f7fc6631d5daafa41eac81b47",
+          engine: 'google_images',
+          q: query,
+          num: 1, // Number of results to retrieve
+          tbm: 'isch', // search
+        },
+      });
+      return response.data.suggested_searches[0].thumbnail;
+    } catch (error){
+      return 'https://example.com/default-image.jpg'; 
+    }
+  };
+
   // Function to fetch recipes from Ninja API based on the search query
   const fetchRecipes = async (query) => {
     try {
@@ -21,6 +40,33 @@ const Dashboard = () => {
           query: query, // pass submitted search term
         },
       });
+
+      // response.data[0].image = await searchImages(response.data[0].title);
+      // response.data[0].image = "https://serpapi.com/searches/6714da90a775f29102247932/images/b1e7d307ded8964694b968ca766fc29c87d38b0171ce5307e9fd93aacfd9aec0.jpeg";
+
+      // Use Promise.all to handle asynchronous image searches efficiently
+      // const imagePromises = response.data.map(recipe => {
+      //   return searchImage(recipe.title)
+      //     .then(imageUrl => ({ ...recipe, image: imageUrl })); 
+      // });
+
+      // // Wait for all image searches to complete
+      // const recipesWithImages = await Promise.all(imagePromises);
+
+      // response.data[0].image = searchImage(response.data[0].title);
+      // setRecipes(response.data);
+
+      const imageResponse = await axios.get('http://localhost:3001/api/serpapi', {
+        params: {
+          engine: 'google_images',
+          q: 'Sushi',
+          num: 1,
+          tbm: 'isch'
+        }
+      });
+
+      response.data[0].image = imageResponse.data.suggested_searches[0].thumbnail;
+      
       setRecipes(response.data);
       setLoading(false);
     } catch (error) {
@@ -75,7 +121,7 @@ const Dashboard = () => {
                   <div className="p-6 bg-white rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
                     {/* Image */}
                     <img
-                      src={recipe.image || 'placeholder-image.jpg'} // Use a placeholder if no image
+                      src={recipe.image} // Use a placeholder if no image
                       alt={recipe.title}
                       className="w-full h-40 object-cover rounded-t-lg mb-4"
                     />
@@ -96,5 +142,7 @@ const Dashboard = () => {
     </section>
   );
 };
+
+
 
 export default Dashboard;
