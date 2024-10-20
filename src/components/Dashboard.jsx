@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Dashboard = () => {
@@ -8,14 +8,15 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Separate state for the submitted query
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Add this within the component
 
   // Function to fetch recipes from Ninja API based on the search query
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
-      const response = await axios.get('https://api.api-ninjas.com/v1/recipe', {
+      const response = await axios.get("https://api.api-ninjas.com/v1/recipe", {
         headers: {
-          'X-Api-Key': '83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs',
+          "X-Api-Key": "83K5Y0RiBtgPor0HjhqSEw==ZCEwRdwBpbDppPIs",
         },
         params: {
           query: query, // pass submitted search term
@@ -40,7 +41,9 @@ const Dashboard = () => {
     <section className="relative pt-24 px-6">
       {/* Search Bar */}
       <div className="max-w-lg mx-auto mb-8">
-        <form onSubmit={handleSubmit}> {/* Form submission will trigger the search */}
+        <form onSubmit={handleSubmit}>
+          {" "}
+          {/* Form submission will trigger the search */}
           <input
             type="text"
             placeholder="Search for a recipe..."
@@ -66,24 +69,26 @@ const Dashboard = () => {
           <div className="flex space-x-6">
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
-                <Link
-                  to={`/recipes/${recipe.title}`}
+                <div
                   key={recipe.id}
-                  className="group relative flex-none w-64"
+                  className="group relative flex-none w-64 cursor-pointer"
+                  onClick={() =>
+                    navigate(`/recipes/${recipe.title}`, { state: { recipe } })
+                  }
                 >
                   {/* Recipe Tile */}
                   <div className="p-6 bg-white rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105">
-                    {/* Image */}
                     <img
-                      src={recipe.image || 'placeholder-image.jpg'} // Use a placeholder if no image
+                      src={recipe.image || "placeholder-image.jpg"}
                       alt={recipe.title}
                       className="w-full h-40 object-cover rounded-t-lg mb-4"
                     />
-                    {/* Name and Description */}
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
-                    <p className="text-gray-600">{recipe.instructions?.slice(0, 50)}...</p> {/* Limit description */}
+                    <p className="text-gray-600">
+                      {recipe.instructions?.slice(0, 50)}...
+                    </p>
                   </div>
-                </Link>
+                </div>
               ))
             ) : (
               <p className="text-gray-600 text-center w-full">
