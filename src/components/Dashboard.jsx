@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
@@ -9,7 +10,28 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate(); // Add this within the component
+  
+  // Function to fetch google images using Pexels API
+  async function pexelSearchPhotos(query) {
+    try{
+        const response = await fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=1`,{
+            headers: {
+                Authorization: "bV8EomxUZBoaninBow7lKNbzqPreK2V6b4UN2O9VPzYQwKLoOzHV61XX"
+            }
+        });
 
+        if(!response.ok){
+            throw new Error(`Pexels API error ${response.status} ${response.statusText}`)
+        }
+        const data = await response.json();
+        return data;
+
+    }catch(error){
+        console.error('Error fetching photos: ', error);
+    }};
+
+
+  // Function to fetch recipes from Ninja API based on the search query
   const fetchRecipes = async (query) => {
     try {
       setLoading(true);
@@ -21,6 +43,22 @@ const Dashboard = () => {
           query: query,
         },
       });
+      
+
+      // For each photo, call Pexel search photos
+      for (let i = 0; i < response.data.length; i++){
+        pexelSearchPhotos(response.data[i].title)
+        .then(photos => {
+          response.data[i].image = photos.photos[0].src.tiny;
+          console.log("LOADED PHOTO::", photos.photos[0].src.tiny);
+
+        }).catch(error => {
+          console.error("Error fetching photos from Pexels:", error);
+        });
+      }
+
+      
+
       setRecipes(response.data);
       setLoading(false);
     } catch (error) {
@@ -100,10 +138,17 @@ const Dashboard = () => {
                   {/* Recipe Tile */}
                   <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105">
                     {/* Image */}
-                    <img
-                      src={recipe.image || "placeholder-image.jpg"}
+                    {/* <img
+                      src={recipe.image} // Use a placeholder if no image
                       alt={recipe.title}
-                      className="w-full h-40 object-cover rounded-t-3xl mb-4"
+                      className="w-full h-40 object-cover rounded-t-lg mb-4"
+                    /> */}
+                    <LazyLoadImage
+                      src={recipe.image} 
+                      alt={recipe.title}
+                      width={'100%'}     // Provide width for better layout
+                      height={160}      // Provide height for better layout  
+                      className="w-full h-40 object-cover rounded-t-lg mb-4" 
                     />
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
                     <p className="text-gray-600">
@@ -121,5 +166,7 @@ const Dashboard = () => {
     </section>
   );
 };
+
+
 
 export default Dashboard;
