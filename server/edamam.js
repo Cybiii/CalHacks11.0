@@ -6,7 +6,7 @@ const APP_KEY = process.env.EDAMAM_API_KEY; // Replace with your actual Edamam A
 apiKey: process.env.VITE_GROQ_API_KEY
 const apiUrl = 'https://api.edamam.com/api/recipes/v2';
 
-async function getRecipesByIngredient(ingredient) {
+async function getRecipesByName(ingredient) {
   try {
     const response = await axios.get(apiUrl, {
       params: {
@@ -23,8 +23,8 @@ async function getRecipesByIngredient(ingredient) {
     const recipes = response.data.hits; 
 
     // Example: Print the first recipe's name and URL
-    console.log("First recipe:", recipes[0].recipe.label);
-    console.log("Recipe URL:", recipes[0].recipe.url);
+    // console.log("First recipe:", recipes[0].recipe.label);
+    // console.log("Recipe URL:", recipes[0].recipe.url);
 
     return recipes;
   } catch (error) {
@@ -34,4 +34,4 @@ async function getRecipesByIngredient(ingredient) {
 }
 
 
-module.exports = {getRecipesByIngredient};
+module.exports = {getRecipesByName};
