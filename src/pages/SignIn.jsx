@@ -88,10 +88,12 @@ function SignIn() {
               <>
                 <div className="pt-32 pb-12 md:pt-40 md:pb-20">
                   {/* Page header */}
-                  <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20">
+                  <div className="max-w-3xl mx-auto text-center pb-12 md:pb-10">
                     <h1 className="h1">
-                      Welcome back. We exist to teach you how to cook.
+                      Welcome back to{" "}
+                      <span className="text-red-600">MealPrep!</span>
                     </h1>
+                    <h2 className="h3">What are we <span className="text-red-600">cooking</span> today?</h2>
                   </div>
 
                   {/* Form */}
