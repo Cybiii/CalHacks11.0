@@ -2,10 +2,10 @@ const recipes = [
   {
     id: 1,
     name: "Classic Spaghetti Bolognese",
-    image: "https://example.com/images/spaghetti-bolognese.jpg",
+    image: "https://www.recipetineats.com/tachyon/2018/07/Spaghetti-Bolognese.jpg?resize=500%2C375",
     description: "A traditional Italian pasta dish with a rich and savory meat sauce.",
     ingredients: [
-      "200g spaghetti",
+      "200g spaghetti", 
       "300g ground beef",
       "1 can (400g) diced tomatoes",
 
@@ -20,7 +20,7 @@ const recipes = [
   {
     id: 2,
     name: "Chicken Caesar Salad",
-    image: "https://example.com/images/chicken-caesar-salad.jpg",
+    image: "https://www.grocery.coop/sites/default/files/NCG_Dennis_Becker_Classic_Caesar_Salad_715_x_477.jpg",
     description: "A crisp and refreshing Caesar salad topped with grilled chicken.",
     ingredients: [
       "2 grilled chicken breasts, sliced",
@@ -37,7 +37,7 @@ const recipes = [
   {
     id: 3,
     name: "Vegan Tofu Stir-fry",
-    image: "https://example.com/images/vegan-tofu-stir-fry.jpg",
+    image: "https://minimalistbaker.com/wp-content/uploads/2013/10/Easy-Tofu-Stirfry-minimalistbaker.com_.jpg",
     description: "A quick and healthy stir-fry with tofu, vegetables, and a flavorful soy-based sauce.",
     ingredients: [
       "400g firm tofu, cubed",
