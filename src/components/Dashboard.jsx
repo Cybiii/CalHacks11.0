@@ -29,16 +29,41 @@ const Dashboard = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSearchQuery(searchTerm);
-    fetchRecipes(searchTerm);
+    await fetchRecipes(searchTerm);
+
+    // Scroll down a little after search if recipes are found
+    if (recipes.length > 0) {
+      window.scrollBy({
+        top: 200, // Adjust this value to control how much you scroll
+        behavior: "smooth",
+      });
+    }
   };
 
   return (
     <section className="relative pt-24 px-6 bg-[#e4002b] min-h-screen">
+      {/* Left wave bar */}
+      <div className="absolute top-0 left-0 w-20 h-full bg-wave-pattern bg-cover bg-left animate-waveScroll"></div>
+      {/* Right wave bar */}
+      <div className="absolute top-0 right-0 w-20 h-full bg-wave-pattern bg-cover bg-right animate-waveScroll"></div>
+
+      {/* Image as a header visual */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex justify-center items-center mb-8">
+          <img
+            className="mx-auto"
+            src={"../../public/images/mealprep.png"} // Using the imported image
+            width="600"
+            alt="logo"
+          />
+        </div>
+      </div>
+
       {/* Search Bar */}
-      <div className="max-w-lg mx-auto pt-20 mb-8">
+      <div className="max-w-lg mx-auto mb-6">
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
           <input
             type="text"
@@ -49,7 +74,7 @@ const Dashboard = () => {
           />
           <button
             type="submit"
-            className="mt-4 w-1/4 px-4 py-3 bg-[#a3001b] text-white rounded-full text-center"
+            className="mt-4 w-1/2 px-4 py-3 bg-[#a3001b] text-white rounded-full text-center"
           >
             Search
           </button>
@@ -62,7 +87,7 @@ const Dashboard = () => {
         <p className="text-center text-[#e4002b]">{error}</p>
       ) : (
         <div className="relative max-w-full overflow-x-auto">
-          <div className="flex space-x-6">
+          <div className="flex space-x-6 py-4">
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
                 <div
@@ -76,19 +101,19 @@ const Dashboard = () => {
                   <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105">
                     {/* Image */}
                     <img
-                      src={recipe.image || 'placeholder-image.jpg'}
+                      src={recipe.image || "placeholder-image.jpg"}
                       alt={recipe.title}
                       className="w-full h-40 object-cover rounded-t-3xl mb-4"
                     />
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
-                    <p className="text-gray-600">{recipe.instructions?.slice(0, 50)}...</p>
+                    <p className="text-gray-600">
+                      {recipe.instructions?.slice(0, 50)}...
+                    </p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-white text-center w-full">
-                No recipes found.
-              </p>
+              <p className="text-white text-center w-full">No recipes found.</p>
             )}
           </div>
         </div>
