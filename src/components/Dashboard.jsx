@@ -13,14 +13,15 @@ import { useAuth } from "../context/AuthContext";
 import Bookmarks from "./Bookmarks"; // Import Bookmarks component
 import FilledBookmarkIcon from "./FilledBookmarkIcon";
 import EmptyBookmarkIcon from "./EmptyBookmarkIcon";
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -48,7 +49,7 @@ const Dashboard = () => {
         {
           headers: {
             Authorization:
-              "bV8EomxUZBoaninBow7lKNbzqPreK2V6b4UN2O9VPzYQwKLoOzHV61XX",
+              import.meta.env.VITE_PEXELS_API_KEY,
           },
         }
       );
@@ -77,7 +78,6 @@ const Dashboard = () => {
           query: query,
         },
       });
-      
 
       // Collect recipes and fetch images in parallel
       const updatedRecipes = await Promise.all(
@@ -97,7 +97,6 @@ const Dashboard = () => {
       );
 
       setRecipes(updatedRecipes);
-      
 
       const recipesWithId = response.data.map((recipe) => ({
         ...recipe,
@@ -105,8 +104,7 @@ const Dashboard = () => {
       }));
 
       setRecipes(recipesWithId);
-     
-      
+
       setLoading(false);
     } catch (error) {
       setError("Error fetching recipes");
@@ -216,63 +214,55 @@ const Dashboard = () => {
                   }
                 >
                   {/* Recipe Tile */}
-                    <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105 h-96 flex flex-col justify-between">
+                  <div className="p-6 bg-white rounded-3xl shadow-lg transform transition-transform duration-300 hover:scale-105 h-96 flex flex-col justify-between">
                     {/* Image */}
-                    {/* <img
-                      src={recipe.image} // Use a placeholder if no image
-                      alt={recipe.title}
-                      className="w-full h-40 object-cover rounded-t-lg mb-4"
-                    /> */}
                     <LazyLoadImage
                       src={recipe.image}
                       alt={recipe.title}
-                      width={"100%"} // Provide width for better layout
-                      height={160} // Provide height for better layout
+                      width={"100%"}
+                      height={160}
                       className="w-full h-40 object-cover rounded-t-lg mb-4"
                     />
                     <h4 className="text-xl font-bold mb-2">{recipe.title}</h4>
                     <p className="text-gray-600">
-                        {recipe.instructions?.slice(0, 50)}...
-                      </p>
-                      {/* Bookmark Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBookmark(recipe);
-                        }}
-                        className="mt-2 text-blue-500 hover:text-blue-700 focus:outline-none"
-                        aria-label={
-                          bookmarkedRecipes.some(
-                            (bookmark) => bookmark.recipeId === recipe.id
-                          )
-                            ? "Remove bookmark"
-                            : "Add bookmark"
-                        }
-                      >
-                        {bookmarkedRecipes.some(
+                      {recipe.instructions?.slice(0, 50)}...
+                    </p>
+                    {/* Bookmark Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBookmark(recipe);
+                      }}
+                      className="mt-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                      aria-label={
+                        bookmarkedRecipes.some(
                           (bookmark) => bookmark.recipeId === recipe.id
-                        ) ? (
-                          <FilledBookmarkIcon />
-                        ) : (
-                          <EmptyBookmarkIcon />
-                        )}
-                      </button>
+                        )
+                          ? "Remove bookmark"
+                          : "Add bookmark"
+                      }
+                    >
+                      {bookmarkedRecipes.some(
+                        (bookmark) => bookmark.recipeId === recipe.id
+                      ) ? (
+                        <FilledBookmarkIcon />
+                      ) : (
+                        <EmptyBookmarkIcon />
+                      )}
+                    </button>
                   </div>
-                ))
-              ) : (
-                <p className="text-white text-center w-full">
-                  No recipes found.
-                </p>
-              )}
-            </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-white text-center w-full">No recipes found.</p>
+            )}
           </div>
-          {/* Include Bookmarks component */}
-          <Bookmarks />
-        </>
+        </div>
       )}
+      {/* Include Bookmarks component */}
+      <Bookmarks />
     </section>
   );
 };
-
 
 export default Dashboard;

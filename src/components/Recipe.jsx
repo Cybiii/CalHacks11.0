@@ -30,7 +30,7 @@ const Recipe = () => {
 
   // Initialize TTS hook
   const tts = useTTS({
-    apiKey: "your-tts-api-key", // Replace with your API key
+    apiKey: import.meta.env.VITE_CARTESIA_API_KEY, // Replace with your API key
     sampleRate: 44100,
   });
 
