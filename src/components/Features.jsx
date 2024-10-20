@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import Transition from "../utils/Transition";
 
-import FeaturesBg from "../pages/images/features-bg.png";
-import FeaturesElement from "../pages/images/features-element.png";
+import FeaturesBg from "../pages/images/lasagna.jpg";
+import FeaturesElement from "../pages/images/fork.png";
 
 function Features() {
   const [tab, setTab] = useState(1);
